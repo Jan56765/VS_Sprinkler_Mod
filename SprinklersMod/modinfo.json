@@ -1,0 +1,13 @@
+{
+    "type": "code",
+    "modid": "sprinklersmod",
+    "name": "Sprinkler Mod",
+    "authors": [
+        "Jan5676"
+    ],
+    "description": "Adds various tiers of Sprinklers to Vintage Story. These will run periodically, I will take no responsibility for lag created from excessive use ;)",
+    "version": "1.0.0",
+    "dependencies": {
+        "game": "1.21.*"
+    }
+}
