@@ -5,22 +5,18 @@
     "blockmaterial": "Metal",
     "creativeinventory": { "general": [ "*" ] },
     "resistance": 2,
+    "lightAbsorption": 0,
     "sidesolid": {
 		"all": false
 	},	
 	"sideopaque": {
 		"all": false
 	},
-    "sideao": {
-        "all": false
-    },
     "sounds": {
         "place": "game:block/vesselopen",
         "break": "game:block/vesselclose"
     },
-    "collisionbox": {
-        "x1": 0, "y1": 0, "z1": 0, "x2": 0, "y2": 0, "z2": 0
-    },
+    "collisionbox": null,
     "selectionbox": {
         "x1": 0.25, "y1": 0, "z1": 0.25, "x2": 0.75, "y2": 0.5, "z2": 0.75
     },
