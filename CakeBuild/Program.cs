@@ -108,6 +108,8 @@ public sealed class PackageTask : FrostingTask<BuildContext>
         {
             context.CopyFile($"../{BuildContext.ProjectName}/modicon.png", $"../Releases/{context.Name}/modicon.png");
         }
+        context.DeleteFile($"../Releases/sprinklersmod/SprinklersMod.pdb");
+        context.DeleteFile($"../Releases/sprinklersmod/SprinklersMod.deps.json");
         context.Zip($"../Releases/{context.Name}", $"../Releases/{context.Name}_{context.Version}.zip");
     }
 }
