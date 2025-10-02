@@ -134,7 +134,7 @@ namespace SprinklersMod.BlockEntities
         }
 
         //Translator
-        private string T(string code) {
+        private static string T(string code) {
             return Lang.Get("sprinklersmod:" + code);
         }
 
