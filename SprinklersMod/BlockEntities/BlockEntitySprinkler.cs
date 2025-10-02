@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Text;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
@@ -18,6 +21,7 @@ namespace SprinklersMod.BlockEntities
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);
+
             //Create Random Tick Interval so that the sprinklers never execute all at once
             Random rng = new Random();
             int gameTickInterval = rng.Next(SprinklersModSystem.config.minIntervalInMillis, SprinklersModSystem.config.minIntervalInMillis + 5000);
@@ -33,6 +37,7 @@ namespace SprinklersMod.BlockEntities
                 firstTick = false;
                 return;
             }
+
             //Only run Script on actually filled sprinklers
             if (waterAmount >= SprinklersModSystem.config.waterConsumption)
             {
@@ -95,19 +100,19 @@ namespace SprinklersMod.BlockEntities
         private int determineRange()
         {
             switch (Block.Code)
-                {
-                    case "sprinklersmod:tin_sprinkler": return SprinklersModSystem.config.tinSprinklerRange;
-                    case "sprinklersmod:iron_sprinkler": return SprinklersModSystem.config.ironSprinklerRange;
-                    case "sprinklersmod:steel_sprinkler": return SprinklersModSystem.config.steelSprinklerRange;
-                    default: return 1;
-                }
+            {
+                case "sprinklersmod:tin_sprinkler": return SprinklersModSystem.config.tinSprinklerRange;
+                case "sprinklersmod:iron_sprinkler": return SprinklersModSystem.config.ironSprinklerRange;
+                case "sprinklersmod:steel_sprinkler": return SprinklersModSystem.config.steelSprinklerRange;
+                default: return 1;
+            }
         }
 
         //Provide data to the Block Info Interface
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
-            dsc.Append("Water filled: " + ((float) waterAmount / 10).ToString("0.#") + " / 20 Liters\n");
-            dsc.Append("Average Moisture: " + (avgWaterPercentage * 100).ToString("0.#") + "%");
+            dsc.Append(T("waterfilled") + ": " + ((float)waterAmount / 10).ToString("0.#") + " / 20 " + T("liters") + "\n");
+            dsc.Append(T("averagemoisture") + ": " + (avgWaterPercentage * 100).ToString("0.#") + "%");
             dsc.ToString();
         }
 
@@ -126,6 +131,11 @@ namespace SprinklersMod.BlockEntities
             firstTick = tree.GetBool("firstTick");
             waterAmount = tree.GetInt("waterAmount");
             avgWaterPercentage = tree.GetFloat("avgWaterPercentage");
+        }
+
+        //Translator
+        private string T(string code) {
+            return Lang.Get("sprinklersmod:" + code);
         }
 
     }

@@ -2,26 +2,34 @@
 	"code": "steel_sprinkler",
 	"class": "sprinklersmod.sprinkler",
     "entityClass": "sprinklersmod.blockEntitySprinkler",
-    "blockmaterial": "wood",
+    "blockmaterial": "Metal",
     "creativeinventory": { "general": [ "*" ] },
+    "resistance": 2,
     "sidesolid": {
 		"all": false
 	},	
 	"sideopaque": {
 		"all": false
 	},
+    "sideao": {
+        "all": false
+    },
     "sounds": {
-        "place": "game:block/planks",
-        "break": "game:block/planks"
+        "place": "game:block/vesselopen",
+        "break": "game:block/vesselclose"
     },
     "collisionbox": {
-        "x1": 0.25, "y1": 0, "z1": 0.25, "x2": 0.75, "y2": 0.5, "z2": 0.75
+        "x1": 0, "y1": 0, "z1": 0, "x2": 0, "y2": 0, "z2": 0
     },
     "selectionbox": {
         "x1": 0.25, "y1": 0, "z1": 0.25, "x2": 0.75, "y2": 0.5, "z2": 0.75
     },
     "shapeByType": {
-        "*": {"base": "block/sprinklershape"}
+        "*": {"base": "block/steelsprinkler"}
+    },
+    "textures": {
+        "steel": {"base": "game:block/metal/anvil/steel"},
+        "steel2": {"base": "game:block/metal/lantern/steel"}
     }
 	
 }

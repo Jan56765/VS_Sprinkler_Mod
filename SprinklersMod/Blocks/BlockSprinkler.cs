@@ -25,7 +25,6 @@ namespace SprinklersMod.Blocks
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
-            api.Logger.Event(byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack.ToString());
             if (checkSelectedItem(byPlayer))
             {
                 BlockEntitySprinkler blockEntitySprinkler = world.BlockAccessor.GetBlockEntity<BlockEntitySprinkler>(blockSel.Position);
@@ -37,6 +36,10 @@ namespace SprinklersMod.Blocks
 
         public bool checkSelectedItem(IPlayer byPlayer)
         {
+            if (byPlayer.InventoryManager.ActiveHotbarSlot == null || byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack == null)
+            {
+                return false;
+            }
             var itemStack = byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack;
             if (EnumItemClass.Block == itemStack.Class)
             {

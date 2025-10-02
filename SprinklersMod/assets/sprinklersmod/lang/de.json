@@ -1,4 +1,11 @@
 {
-	"block-sprinkler": "Sprenkler",
-	"block-waterspreader": "Wasserverteiler"
+	"block-tin_sprinkler": "Zinn-Bronze-Sprinkler",
+	"block-iron_sprinkler": "Eisen-Sprinkler",
+	"block-steel_sprinkler": "Stahl-Sprinkler",
+	"waterfilled": "Füllstand",
+	"liters": "Liter",
+	"averagemoisture": "Durchschnittliche Feuchtigkeit",
+
+	"game:sprinklersmod-quickstart-title": "Sprinkler",
+	"game:sprinklersmod-quickstart-text": "Der Sprinkler Mod ermöglicht das Herstellen von Sprinklern, welche automatisch Äcker bewässern können.\n\nDiese Sprinkler werden in einem (konfigurierbaren) Intervall alle Felder in ihrer Reichweite bewässern. Um dies jedoch tun zu können, müssen sie zuvor mit einer Gießkanne aufgefüllt werden. Am Tooltip lässt sich erkennen, wie hoch der aktuelle Füllstand ist. Sobald Wasser vorhanden ist und die durchschnittliche Feuchtigkeit im Umfeld kleiner 80% ist, wird der Sprinkler aktiv und verbraucht einen Teil seines Füllstandes, um alle Blöcke um 5% zu bewässern. Dies geschieht so lange, bis die 80% Hürde erreicht ist.\n\nEin Wort der Warnung: Durch das kontinuierliche Suchen nach bewässerbaren Blöcken kann dieser Mod Performanceprobleme verursachen, wenn zu viele Sprinkler verwendet werden. Demnach sollte dieser Mod mit Vorsicht genossen werden.\n\nEs gibt 3 Arten von Sprinklern:\n\n<a href=\"handbooksearch://Zinn-Bronze-Sprinkler\">Zinn-Bronze-Sprinkler</a> - 2 Felder Radius\n<a href=\"handbooksearch://Eisen-Sprinkler\">Eisen-Sprinkler</a> - 4 Felder Radius\n<a href=\"handbooksearch://Stahl-Sprinkler\">Stahl-Sprinkler</a> - 6 Felder Radius\n\n\nKonfigurationsparameter:\n\nxyzSprinklerRange => Bestimmt den Bewässerungsradius der einzelnen Sprinklertypen\n\nwaterConsumption => Multiplikator dafür, wie viel Wasser pro Bewässerung genutzt wird. Formel: 0,1 Liter * waterConsumption\n\nminIntervalInMillis => Legt einen Minimalwert fest, in Millisekunden, wie häufig sich die Sprinkler aktivieren sollen. Um Lag zu vermeiden wird beim Laden der Welt auf jeden Sprinkler eine zufällige Zeit von bis zu 5 Sekunden auf diesen Wert draufgerechnet."
 }
