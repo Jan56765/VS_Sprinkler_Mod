@@ -1,6 +1,6 @@
 public class ModConfig
 {
-    public int tinSprinklerRange = 2;
+    public int bronzeSprinklerRange = 2;
     public int ironSprinklerRange = 4;
     public int steelSprinklerRange = 6;
 

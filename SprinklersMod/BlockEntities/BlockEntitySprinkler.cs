@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO.Compression;
 using System.Text;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
@@ -11,9 +10,14 @@ using Vintagestory.GameContent;
 
 namespace SprinklersMod.BlockEntities
 {
-    public class BlockEntitySprinkler : BlockEntity {
+    public class BlockEntitySprinkler : BlockEntity
+    {
 
-        public bool firstTick = true;
+        BlockEntityAnimationUtil animUtil
+        {
+            get { return GetBehavior<BEBehaviorAnimatable>().animUtil; }
+        }
+
         //Water amount measured as int because of floating point nonsense (e.g. 7 = 0.7 Liters)
         public int waterAmount;
         public float avgWaterPercentage;
@@ -22,21 +26,20 @@ namespace SprinklersMod.BlockEntities
         {
             base.Initialize(api);
 
-            //Create Random Tick Interval so that the sprinklers never execute all at once
-            Random rng = new Random();
-            int gameTickInterval = rng.Next(SprinklersModSystem.config.minIntervalInMillis, SprinklersModSystem.config.minIntervalInMillis + 5000);
+            //Safety net if server and client get out of sync with this block Entity
+            //In the past this causes invisible sprinklers registered as an air block
+            //to cause the animUtil to throw a NullPointer
+            if (Block.Id == 0)
+            {
+                Api.World.BlockAccessor.RemoveBlockEntity(Pos);
+            }
+
             //Register Listener
-            RegisterGameTickListener(OnGameTick, gameTickInterval);
+            RegisterGameTickListener(OnGameTick, getRandomInterval());
         }
 
         private void OnGameTick(float dt)
         {
-            //Only run after first tick to prevent world loading issues
-            if (firstTick)
-            {
-                firstTick = false;
-                return;
-            }
 
             //Only run Script on actually filled sprinklers
             if (waterAmount >= SprinklersModSystem.config.waterConsumption)
@@ -76,37 +79,30 @@ namespace SprinklersMod.BlockEntities
                         {
                             be.WaterFarmland(0.1f, false);
                             wateredAtLeastOneBlock = true;
+                            if (Api.World.Side == EnumAppSide.Client)
+                            {
+                                spawnParticles(bPos);
+                            }
+                            be.MarkDirty(true);
                         }
                         blockMoistures += be.MoistureLevel;
                     }
                 }
                 if (wateredAtLeastOneBlock)
                 {
+                    if (Api.World.Side == EnumAppSide.Client)
+                    {
+                        playSound();
+                        runAnimation("sprinkler-turn");
+                    }
                     waterAmount -= SprinklersModSystem.config.waterConsumption;
                     avgWaterPercentage = blockMoistures / blockCount;
+                    MarkDirty();
                 }
             }
         }
 
-        public void fillWater() {
-            if (waterAmount + 10 > 200)
-            {
-                waterAmount = 200;
-                return;
-            }
-            waterAmount += 10;
-        }
-
-        private int determineRange()
-        {
-            switch (Block.Code)
-            {
-                case "sprinklersmod:tin_sprinkler": return SprinklersModSystem.config.tinSprinklerRange;
-                case "sprinklersmod:iron_sprinkler": return SprinklersModSystem.config.ironSprinklerRange;
-                case "sprinklersmod:steel_sprinkler": return SprinklersModSystem.config.steelSprinklerRange;
-                default: return 1;
-            }
-        }
+        
 
         //Provide data to the Block Info Interface
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
@@ -120,7 +116,6 @@ namespace SprinklersMod.BlockEntities
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.ToTreeAttributes(tree);
-            tree.SetBool("firstTick", firstTick);
             tree.SetInt("waterAmount", waterAmount);
             tree.SetFloat("avgWaterPercentage", avgWaterPercentage);
         }
@@ -128,14 +123,81 @@ namespace SprinklersMod.BlockEntities
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
             base.FromTreeAttributes(tree, worldForResolving);
-            firstTick = tree.GetBool("firstTick");
             waterAmount = tree.GetInt("waterAmount");
             avgWaterPercentage = tree.GetFloat("avgWaterPercentage");
         }
 
-        //Translator
-        private static string T(string code) {
+        public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
+        {
+            //I don't understand exactly why it's here, I just assume it's because this guarantees that the animator
+            //will only be initialized on the client side (Example taken from the Riftward)
+            //Also only works here and NOT in the Init function
+            if (animUtil?.animator == null)
+            {
+                animUtil?.InitializeAnimator("sprinkler");
+            }
+            return base.OnTesselation(mesher, tessThreadTesselator);
+        }
+
+        public void fillWater()
+        {
+            if (waterAmount + 10 > 200)
+            {
+                waterAmount = 200;
+                return;
+            }
+            waterAmount += 10;
+        }
+        
+        //Translations
+        private static string T(string code)
+        {
             return Lang.Get("sprinklersmod:" + code);
+        }
+
+        private void spawnParticles(BlockPos p)
+        {
+            SimpleParticleProperties WaterParticles = new SimpleParticleProperties(
+                15, 20, ColorUtil.WhiteArgb, new Vec3d(p.X + 0.5, p.Y + 1.1f, p.Z + 0.5), new Vec3d(p.X + 0.5, p.Y + 1.5f, p.Z + 0.5),
+                new Vec3f(-1f, 0.5f, -1f), new Vec3f(1f, 2f, 1f), 1f, 1f, 0.33f, 0.75f, EnumParticleModel.Cube
+            );
+
+            WaterParticles.SizeEvolve = new EvolvingNatFloat(EnumTransformFunction.LINEAR, -0.7f);
+            WaterParticles.ClimateColorMap = "climateWaterTint";
+
+            Api.World.SpawnParticles(WaterParticles, null);
+        }
+
+        private void runAnimation(string animation)
+        {
+            if (animUtil != null)
+            {
+                animUtil?.StartAnimation(new AnimationMetaData() { Animation = animation, Code = animation });
+            }
+        }
+
+        private void playSound()
+        {
+            Api.World.PlaySoundAt(AssetLocation.Create("sounds/effect/watering"), Pos, 0, null, false, 12, 0.75f);
+        }
+
+
+        private int getRandomInterval()
+        {
+            //Might not be the randomest seed ever but good enough
+            Random r = new Random(Pos.GetHashCode());
+            return r.Next(SprinklersModSystem.config.minIntervalInMillis, SprinklersModSystem.config.minIntervalInMillis + 5000);
+        }
+
+        private int determineRange()
+        {
+            switch (Block.Code)
+            {
+                case "sprinklersmod:bronze_sprinkler": return SprinklersModSystem.config.bronzeSprinklerRange;
+                case "sprinklersmod:iron_sprinkler": return SprinklersModSystem.config.ironSprinklerRange;
+                case "sprinklersmod:steel_sprinkler": return SprinklersModSystem.config.steelSprinklerRange;
+                default: return 1;
+            }
         }
 
     }

@@ -255,14 +255,26 @@
 	],
 	"animations": [
 		{
-			"name": "sprinklerTurn",
-			"code": "sprinklerTurn",
-			"quantityframes": 30,
-			"onActivityStopped": "PlayTillEnd",
-			"onAnimationEnd": "EaseOut",
+			"name": "sprinkler-turn",
+			"code": "sprinkler-turn",
+			"quantityframes": 20,
+			"onActivityStopped": "Stop",
+			"onAnimationEnd": "Stop",
 			"keyframes": [
 				{
 					"frame": 0,
+					"elements": {
+						"Arms": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 }
+					}
+				},
+				{
+					"frame": 5,
+					"elements": {
+						"Arms": { "rotationX": 0.0, "rotationY": 180.0, "rotationZ": 0.0 }
+					}
+				},
+				{
+					"frame": 10,
 					"elements": {
 						"Arms": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 }
 					}
@@ -274,19 +286,7 @@
 					}
 				},
 				{
-					"frame": 16,
-					"elements": {
-						"Arms": { "rotationX": 0.0, "rotationY": -180.0, "rotationZ": 0.0 }
-					}
-				},
-				{
-					"frame": 29,
-					"elements": {
-						"Arms": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 }
-					}
-				},
-				{
-					"frame": 30,
+					"frame": 19,
 					"elements": {
 						"Arms": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 }
 					}

@@ -2,6 +2,7 @@
 	"code": "iron_sprinkler",
 	"class": "sprinklersmod.sprinkler",
     "entityClass": "sprinklersmod.blockEntitySprinkler",
+    "entityBehaviors": [{ "name": "Animatable"}],
     "blockmaterial": "Metal",
     "creativeinventory": { "general": [ "*" ] },
     "resistance": 2,
@@ -26,6 +27,12 @@
     "textures": {
         "iron2": {"base": "game:block/metal/anvil/iron"},
         "molybdochalkos": {"base": "game:block/metal/lantern/molybdochalkos"}
-    }
+    },
+    "heldTpIdleAnimation": "holdbothhandslarge", "heldRightReadyAnimation": "heldblockready", "heldTpUseAnimation": "twohandplaceblock",
+	"tpHandTransform": {
+		"translation": { "x": -1.23, "y": -0.95, "z": -0.4 },
+		"rotation": { "x": -2, "y": 25, "z": -100 },
+		"scale": 0.6
+	}
 	
 }

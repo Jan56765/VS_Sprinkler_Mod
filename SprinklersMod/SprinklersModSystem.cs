@@ -10,7 +10,7 @@ public class SprinklersModSystem : ModSystem
 
     public static ModConfig config;
 
-    private const String CONFIG_LOCATION = "sprinklersConfig.json";
+    private const string CONFIG_LOCATION = "sprinklersConfig.json";
 
     public override void Start(ICoreAPI api)
     {
@@ -18,11 +18,8 @@ public class SprinklersModSystem : ModSystem
         loadConfig(api);
 
         base.Start(api);
-        //api.RegisterBlockClass(Mod.Info.ModID + ".slidepole", typeof(BlockSlidepole));
         api.RegisterBlockClass(Mod.Info.ModID + ".sprinkler", typeof(BlockSprinkler));
-        //api.RegisterBlockClass(Mod.Info.ModID + ".waterspreader", typeof(BlockWaterspreader));
         api.RegisterBlockEntityClass(Mod.Info.ModID + ".blockEntitySprinkler", typeof(BlockEntitySprinkler));
-        //api.RegisterBlockEntityClass(Mod.Info.ModID + ".blockEntityWaterspreader", typeof(BlockEntityWaterspreader));
     }
 
     private void loadConfig(ICoreAPI api)
