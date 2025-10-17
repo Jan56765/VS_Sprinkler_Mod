@@ -46,13 +46,13 @@ namespace SprinklersMod.BlockEntities
         {
 
             //Only run Script on actually filled sprinklers
-            if (waterAmount >= SprinklersModSystem.config.waterConsumption)
+            if (waterAmount >= Math.Max(1, SprinklersModSystem.config.waterConsumption))
             {
                 bool wateredAtLeastOneBlock = false;
 
                 //Define Sprinkler Range in Blocks. In its current form it will always be square
                 //The "Diameter" will effectively be (2 * range + 1)
-                int range = determineStats(true);
+                int range = Math.Max(1, determineStats(true));
 
                 //Find all blocks eligible for watering
                 List<BlockPos> blockList = new List<BlockPos>();
@@ -99,7 +99,7 @@ namespace SprinklersMod.BlockEntities
                         playSound();
                         runAnimation("sprinkler-turn");
                     }
-                    waterAmount -= SprinklersModSystem.config.waterConsumption;
+                    waterAmount -= Math.Max(1, SprinklersModSystem.config.waterConsumption);
                     avgWaterPercentage = blockMoistures / blockCount;
                     MarkDirty();
                 }
@@ -195,7 +195,8 @@ namespace SprinklersMod.BlockEntities
         {
             //Might not be the randomest seed ever but good enough
             Random r = new Random(Pos.GetHashCode());
-            return r.Next(SprinklersModSystem.config.minIntervalInMillis, SprinklersModSystem.config.minIntervalInMillis + 5000);
+            int configInterval = Math.Max(1, SprinklersModSystem.config.minIntervalInMillis);
+            return r.Next(configInterval, configInterval + 5000);
         }
 
         private int determineStats(bool range)
