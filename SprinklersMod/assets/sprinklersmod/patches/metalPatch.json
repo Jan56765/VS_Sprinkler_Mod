@@ -1,0 +1,32 @@
+[
+    {
+        "file": "game:itemtypes/part/rod",
+        "op": "addmerge",
+        "path": "/variantgroups",
+        "value": [{"code": "metal", "states": ["brass", "lead"] }]
+    },
+    {
+        "file": "game:itemtypes/resource/metalnailsandstrips",
+        "op": "addmerge",
+        "path": "/allowedVariants",
+        "value": ["*-brass", "*-lead"]
+    },
+    {
+        "file": "game:recipes/smithing/nails",
+        "op": "addmerge",
+        "path": "/0/ingredient/allowedVariants",
+        "value": ["brass", "lead"]
+    },
+    {
+        "file": "game:recipes/smithing/nails",
+        "op": "addmerge",
+        "path": "/1/ingredient/allowedVariants",
+        "value": ["brass", "lead"]
+    },
+    {
+        "file": "game:recipes/smithing/rod",
+        "op": "addmerge",
+        "path": "/ingredient/allowedVariants",
+        "value": ["brass", "lead"]
+    }
+]

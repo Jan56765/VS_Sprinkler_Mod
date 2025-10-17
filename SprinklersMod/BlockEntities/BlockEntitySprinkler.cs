@@ -20,6 +20,7 @@ namespace SprinklersMod.BlockEntities
 
         //Water amount measured as int because of floating point nonsense (e.g. 7 = 0.7 Liters)
         public int waterAmount;
+        public int volume = 1;
         public float avgWaterPercentage;
 
         public override void Initialize(ICoreAPI api)
@@ -29,10 +30,13 @@ namespace SprinklersMod.BlockEntities
             //Safety net if server and client get out of sync with this block Entity
             //In the past this causes invisible sprinklers registered as an air block
             //to cause the animUtil to throw a NullPointer
-            if (Block.Id == 0)
+            if (Block.IsMissing || !Block.Code.Path.StartsWith("t_"))
             {
                 Api.World.BlockAccessor.RemoveBlockEntity(Pos);
+                return; //Also DON'T register!!!
             }
+
+            volume = determineVolume();
 
             //Register Listener
             RegisterGameTickListener(OnGameTick, getRandomInterval());
@@ -102,13 +106,17 @@ namespace SprinklersMod.BlockEntities
             }
         }
 
-        
-
         //Provide data to the Block Info Interface
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
-            dsc.Append(T("waterfilled") + ": " + ((float)waterAmount / 10).ToString("0.#") + " / 20 " + T("liters") + "\n");
-            dsc.Append(T("averagemoisture") + ": " + (avgWaterPercentage * 100).ToString("0.#") + "%");
+            dsc.Append(
+                string.Format("{0}: {1} / {2} {3}\n",
+                T("waterfilled"), //Translation for Water Filled
+                ((float)waterAmount / 10).ToString("0.#"), //Current Water Amount
+                (volume / 10).ToString(), //Max Water Amount
+                T("liters")) //Translation for Liters
+            );
+            dsc.Append(T("averagemoisture") + ": " + (avgWaterPercentage * 100).ToString("0.#") + "%\n");
             dsc.ToString();
         }
 
@@ -129,6 +137,7 @@ namespace SprinklersMod.BlockEntities
 
         public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
+        
             //I don't understand exactly why it's here, I just assume it's because this guarantees that the animator
             //will only be initialized on the client side (Example taken from the Riftward)
             //Also only works here and NOT in the Init function
@@ -141,9 +150,9 @@ namespace SprinklersMod.BlockEntities
 
         public void fillWater()
         {
-            if (waterAmount + 10 > 200)
+            if (waterAmount + 10 > volume)
             {
-                waterAmount = 200;
+                waterAmount = volume;
                 return;
             }
             waterAmount += 10;
@@ -191,11 +200,26 @@ namespace SprinklersMod.BlockEntities
 
         private int determineRange()
         {
-            switch (Block.Code)
+            string prefix = Block.Code.Path.Substring(0, 5); //This feels a bit illegal, but hey, it's a unique identifier
+            switch (prefix)
             {
-                case "sprinklersmod:bronze_sprinkler": return SprinklersModSystem.config.bronzeSprinklerRange;
-                case "sprinklersmod:iron_sprinkler": return SprinklersModSystem.config.ironSprinklerRange;
-                case "sprinklersmod:steel_sprinkler": return SprinklersModSystem.config.steelSprinklerRange;
+                case "t_one": return SprinklersModSystem.config.tOneSprinklerRange;
+                case "t_two": return SprinklersModSystem.config.tTwoSprinklerRange;
+                case "t_thr": return SprinklersModSystem.config.tThreeSprinklerRange;
+                case "t_fou": return SprinklersModSystem.config.tFourSprinklerRange;
+                default: return 1;
+            }
+        }
+
+        private int determineVolume()
+        {
+            string prefix = Block.Code.Path.Substring(0, 5); //This feels a bit illegal, but hey, it's a unique identifier
+            switch (prefix)
+            {
+                case "t_one": return SprinklersModSystem.config.tOneSprinklerVolume;
+                case "t_two": return SprinklersModSystem.config.tTwoSprinklerVolume;
+                case "t_thr": return SprinklersModSystem.config.tThreeSprinklerVolume;
+                case "t_fou": return SprinklersModSystem.config.tFourSprinklerVolume;
                 default: return 1;
             }
         }

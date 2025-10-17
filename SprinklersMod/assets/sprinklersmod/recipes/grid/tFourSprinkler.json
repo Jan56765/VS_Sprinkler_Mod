@@ -1,0 +1,20 @@
+{
+    "ingredientPattern": "GMT,MSM,BMO",
+    "ingredients": {
+        "S": {
+            "allowedVariants": ["copper", "tinbronze", "bismuthbronze", "blackbronze", "brass", "lead"],
+            "type": "block",
+            "code": "sprinklersmod:t_three_sprinkler-*",
+            "name": "metal"
+        },
+        "M": {"type": "block", "code": "game:metal-parts", "quantity": 2},
+        "G": {"type": "item", "code": "game:jonasframes-gears01"},
+        "T": {"type": "item", "code": "game:jonasparts-tank01"},
+        "O": {"type": "item", "code": "game:jonasframes-oscillator01"},
+        "B": {"type": "block", "code": "game:barrel"}
+    },
+    "output": {
+        "type": "block",
+        "code": "sprinklersmod:t_four_sprinkler-{metal}"
+    }
+}

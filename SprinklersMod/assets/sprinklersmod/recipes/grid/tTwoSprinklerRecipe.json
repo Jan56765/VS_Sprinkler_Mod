@@ -1,0 +1,24 @@
+{
+    "ingredientPattern": "GN_,NSN,BN_",
+    "ingredients": {
+        "S": {
+            "allowedVariants": ["copper", "tinbronze", "bismuthbronze", "blackbronze", "brass", "lead"],
+            "type": "block",
+            "code": "sprinklersmod:t_one_sprinkler-*",
+            "name": "metal"
+        },
+        "N": {
+            "allowedVariants": ["copper", "tinbronze", "bismuthbronze", "blackbronze", "brass", "lead"],
+            "type": "item", 
+            "code": "game:metalnailsandstrips-*", 
+            "name": "metal",
+            "quantity": 3
+        },
+        "G": {"type": "item", "code": "game:gear-rusty", "quantity": 4},
+        "B": {"type": "block", "code": "game:woodbucket"}
+    },
+    "output": {
+        "type": "block",
+        "code": "sprinklersmod:t_two_sprinkler-{metal}"
+    }
+}

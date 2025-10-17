@@ -1,5 +1,5 @@
 {
-	"code": "steel_sprinkler",
+	"code": "t_three_sprinkler",
 	"class": "sprinklersmod.sprinkler",
     "entityClass": "sprinklersmod.blockEntitySprinkler",
     "entityBehaviors": [{ "name": "Animatable"}],
@@ -7,6 +7,12 @@
     "creativeinventory": { "general": [ "*" ] },
     "resistance": 2,
     "lightAbsorption": 0,
+    "variantgroups": [
+        {
+            "code": "type",
+            "states": ["copper", "tinbronze", "bismuthbronze", "blackbronze", "brass", "lead"]
+        }
+    ],
     "sidesolid": {
 		"all": false
 	},	
@@ -22,11 +28,20 @@
         "x1": 0.25, "y1": 0, "z1": 0.25, "x2": 0.75, "y2": 0.5, "z2": 0.75
     },
     "shapeByType": {
-        "*": {"base": "block/steelsprinkler"}
+        "*": {"base": "block/sprinkler"}
     },
-    "textures": {
-        "steel": {"base": "game:block/metal/anvil/steel"},
-        "steel2": {"base": "game:block/metal/lantern/steel"}
+    "texturesbytype": {
+        "*-lead": {
+            "material": {"base": "game:block/metal/ingot/{type}"},
+            "baseMaterial": {"base": "game:block/metal/lantern/molybdochalkos"}
+        },
+        "*": {
+            "material": {"base": "game:block/metal/ingot/{type}"},
+            "baseMaterial": {"base": "game:block/metal/lantern/{type}"}
+        }
+    },
+    "groundTransform": {
+        "scale": 4
     },
     "heldTpIdleAnimation": "holdbothhandslarge", "heldRightReadyAnimation": "heldblockready", "heldTpUseAnimation": "twohandplaceblock",
 	"tpHandTransform": {

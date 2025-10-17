@@ -1,8 +1,14 @@
 public class ModConfig
 {
-    public int bronzeSprinklerRange = 2;
-    public int ironSprinklerRange = 4;
-    public int steelSprinklerRange = 6;
+    public int tOneSprinklerRange = 2;
+    public int tTwoSprinklerRange = 4;
+    public int tThreeSprinklerRange = 6;
+    public int tFourSprinklerRange = 8;
+
+    public int tOneSprinklerVolume = 200;
+    public int tTwoSprinklerVolume = 400;
+    public int tThreeSprinklerVolume = 600;
+    public int tFourSprinklerVolume = 1000;
 
     public int waterConsumption = 1;
 
