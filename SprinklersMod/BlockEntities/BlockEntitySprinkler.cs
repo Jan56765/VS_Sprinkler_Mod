@@ -36,7 +36,7 @@ namespace SprinklersMod.BlockEntities
                 return; //Also DON'T register!!!
             }
 
-            volume = determineVolume();
+            volume = determineStats(false);
 
             //Register Listener
             RegisterGameTickListener(OnGameTick, getRandomInterval());
@@ -52,7 +52,7 @@ namespace SprinklersMod.BlockEntities
 
                 //Define Sprinkler Range in Blocks. In its current form it will always be square
                 //The "Diameter" will effectively be (2 * range + 1)
-                int range = determineRange();
+                int range = determineStats(true);
 
                 //Find all blocks eligible for watering
                 List<BlockPos> blockList = new List<BlockPos>();
@@ -198,28 +198,15 @@ namespace SprinklersMod.BlockEntities
             return r.Next(SprinklersModSystem.config.minIntervalInMillis, SprinklersModSystem.config.minIntervalInMillis + 5000);
         }
 
-        private int determineRange()
+        private int determineStats(bool range)
         {
             string prefix = Block.Code.Path.Substring(0, 5); //This feels a bit illegal, but hey, it's a unique identifier
             switch (prefix)
             {
-                case "t_one": return SprinklersModSystem.config.tOneSprinklerRange;
-                case "t_two": return SprinklersModSystem.config.tTwoSprinklerRange;
-                case "t_thr": return SprinklersModSystem.config.tThreeSprinklerRange;
-                case "t_fou": return SprinklersModSystem.config.tFourSprinklerRange;
-                default: return 1;
-            }
-        }
-
-        private int determineVolume()
-        {
-            string prefix = Block.Code.Path.Substring(0, 5); //This feels a bit illegal, but hey, it's a unique identifier
-            switch (prefix)
-            {
-                case "t_one": return SprinklersModSystem.config.tOneSprinklerVolume;
-                case "t_two": return SprinklersModSystem.config.tTwoSprinklerVolume;
-                case "t_thr": return SprinklersModSystem.config.tThreeSprinklerVolume;
-                case "t_fou": return SprinklersModSystem.config.tFourSprinklerVolume;
+                case "t_one": return range ? SprinklersModSystem.config.tOneSprinklerRange : SprinklersModSystem.config.tOneSprinklerVolume;
+                case "t_two": return range ? SprinklersModSystem.config.tTwoSprinklerRange : SprinklersModSystem.config.tTwoSprinklerVolume;
+                case "t_thr": return range ? SprinklersModSystem.config.tThreeSprinklerRange : SprinklersModSystem.config.tThreeSprinklerVolume;
+                case "t_fou": return range ? SprinklersModSystem.config.tFourSprinklerRange : SprinklersModSystem.config.tFourSprinklerVolume;
                 default: return 1;
             }
         }
