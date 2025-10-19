@@ -24,6 +24,8 @@
 	"block-t_four_sprinkler-brass": "Brass-Sprinkler (Tier 4)",
 	"block-t_four_sprinkler-lead": "Lead-Sprinkler (Tier 4)",
 	"blockdesc-t_four_sprinkler-*": "Made for the most dedicated sprinkler enyjoyers",
+	"game:blockhelp-sprinkler-fill": "Fill 1 Liter",
+	"game:blockhelp-sprinkler-fill2": "Fill All Contents",
 	"waterfilled": "Water filled",
 	"liters": "Liters",
 	"averagemoisture": "Average moisture",

@@ -24,6 +24,8 @@
 	"block-t_four_sprinkler-brass": "Messing-Sprinkler (Tier 4)",
 	"block-t_four_sprinkler-lead": "Blei-Sprinkler (Tier 4)",
 	"blockdesc-t_four_sprinkler-*": "Für absolute Sprinkler-Enthusiasten",
+	"game:blockhelp-sprinkler-fill": "1 Liter auffüllen",
+	"game:blockhelp-sprinkler-fill2": "Alle Flüssigkeit einfüllen",
 	"waterfilled": "Füllstand",
 	"liters": "Liter",
 	"averagemoisture": "Durchschnittliche Feuchtigkeit",

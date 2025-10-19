@@ -148,17 +148,22 @@ namespace SprinklersMod.BlockEntities
             return base.OnTesselation(mesher, tessThreadTesselator);
         }
 
-        public void fillWater()
+        public void fillWater(int byAmount)
         {
-            if (waterAmount + 10 > volume)
+            if (waterAmount + byAmount > volume)
             {
                 waterAmount = volume;
             }
             else
             {
-                waterAmount += 10;
+                waterAmount += byAmount;
             }
             MarkDirty();
+        }
+
+        public int getMissingWater()
+        {
+            return volume - waterAmount;
         }
         
         //Translations
