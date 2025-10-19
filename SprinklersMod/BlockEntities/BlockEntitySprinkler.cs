@@ -153,9 +153,12 @@ namespace SprinklersMod.BlockEntities
             if (waterAmount + 10 > volume)
             {
                 waterAmount = volume;
-                return;
             }
-            waterAmount += 10;
+            else
+            {
+                waterAmount += 10;
+            }
+            MarkDirty();
         }
         
         //Translations
