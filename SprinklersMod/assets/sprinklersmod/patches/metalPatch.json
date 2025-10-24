@@ -2,8 +2,15 @@
     {
         "file": "game:itemtypes/part/rod",
         "op": "addmerge",
-        "path": "/variantgroups",
-        "value": [{"code": "metal", "states": ["brass", "lead"] }]
+        "path": "/variantgroups/0/states",
+        "value": ["brass"],
+        "dependsOn": [{ "modid": "pabrass", "invert": true }, { "modid": "windchimes", "invert": true }]
+    },
+    {
+        "file": "game:itemtypes/part/rod",
+        "op": "addmerge",
+        "path": "/variantgroups/0/states",
+        "value": ["lead"]
     },
     {
         "file": "game:itemtypes/resource/metalnailsandstrips",
@@ -27,6 +34,13 @@
         "file": "game:recipes/smithing/rod",
         "op": "addmerge",
         "path": "/ingredient/allowedVariants",
-        "value": ["brass", "lead"]
+        "value": ["brass"],
+        "dependsOn": [{ "modid": "pabrass", "invert": true }, { "modid": "windchimes", "invert": true }]
+    },
+    {
+        "file": "game:recipes/smithing/rod",
+        "op": "addmerge",
+        "path": "/ingredient/allowedVariants",
+        "value": ["lead"]
     }
 ]

@@ -1,20 +1,59 @@
-{
-    "ingredientPattern": "GMT,MSM,BMO",
-    "ingredients": {
-        "S": {
-            "allowedVariants": ["copper", "tinbronze", "bismuthbronze", "blackbronze", "brass", "lead"],
-            "type": "block",
-            "code": "sprinklersmod:t_three_sprinkler-*",
-            "name": "metal"
+[
+    {
+        "ingredientPattern": "GMT,MSM,BMO",
+        "ingredients": {
+            "S": {
+                "allowedVariants": ["copper", "tinbronze", "bismuthbronze", "blackbronze", "brass", "lead"],
+                "type": "block",
+                "code": "sprinklersmod:t_three_sprinkler-*",
+                "name": "metal"
+            },
+            "M": {"type": "block", "code": "game:metal-parts", "quantity": 2},
+            "G": {"type": "item", "code": "game:jonasframes-gears01"},
+            "T": {"type": "item", "code": "game:jonasparts-tank01"},
+            "O": {"type": "item", "code": "game:jonasframes-oscillator01"},
+            "B": {"type": "block", "code": "game:barrel"}
         },
-        "M": {"type": "block", "code": "game:metal-parts", "quantity": 2},
-        "G": {"type": "item", "code": "game:jonasframes-gears01"},
-        "T": {"type": "item", "code": "game:jonasparts-tank01"},
-        "O": {"type": "item", "code": "game:jonasframes-oscillator01"},
-        "B": {"type": "block", "code": "game:barrel"}
+        "recipeGroup": 1,
+        "output": {
+            "type": "block",
+            "code": "sprinklersmod:t_four_sprinkler-{metal}"
+        }
     },
-    "output": {
-        "type": "block",
-        "code": "sprinklersmod:t_four_sprinkler-{metal}"
+    {
+        "ingredientPattern": "S",
+        "width": 1,
+        "height": 1,
+        "ingredients": {
+            "S": {
+                "allowedVariants": ["copper", "tinbronze", "bismuthbronze", "blackbronze", "brass", "lead"],
+                "type": "block",
+                "code": "sprinklersmod:t_four_sprinkler_down-*",
+                "name": "metal"
+            }
+        },
+        "shapeless": true,
+        "output": {
+            "type": "block",
+            "code": "sprinklersmod:t_four_sprinkler-{metal}"
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "width": 1,
+        "height": 1,
+        "ingredients": {
+            "S": {
+                "allowedVariants": ["copper", "tinbronze", "bismuthbronze", "blackbronze", "brass", "lead"],
+                "type": "block",
+                "code": "sprinklersmod:t_four_sprinkler-*",
+                "name": "metal"
+            }
+        },
+        "shapeless": true,
+        "output": {
+            "type": "block",
+            "code": "sprinklersmod:t_four_sprinkler_down-{metal}"
+        }
     }
-}
+]

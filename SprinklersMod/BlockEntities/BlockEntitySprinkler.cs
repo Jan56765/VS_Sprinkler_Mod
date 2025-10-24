@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -23,6 +24,14 @@ namespace SprinklersMod.BlockEntities
         public int volume = 1;
         public float avgWaterPercentage;
 
+        public bool isDownFacing = false;
+        public int downwardsRange = 3;
+
+        public bool overfillLatch = false; //This is used to create a latching behavior where sprinklers water until a threshold and only begin watering again until a lower threshold is met again. This way, a lot of water will be saved
+        private const float LATCH_LOWER_LIMIT = 0.85f;
+        private const float LATCH_UPPER_LIMIT = 0.95f;
+
+
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);
@@ -37,6 +46,7 @@ namespace SprinklersMod.BlockEntities
             }
 
             volume = determineStats(false);
+            isDownFacing = Block.Code.Path.Contains("down");
 
             //Register Listener
             RegisterGameTickListener(OnGameTick, getRandomInterval());
@@ -44,7 +54,7 @@ namespace SprinklersMod.BlockEntities
 
         private void OnGameTick(float dt)
         {
-
+            bool dirty = false;
             //Only run Script on actually filled sprinklers
             if (waterAmount >= Math.Max(1, SprinklersModSystem.config.waterConsumption))
             {
@@ -56,12 +66,13 @@ namespace SprinklersMod.BlockEntities
 
                 //Find all blocks eligible for watering
                 List<BlockPos> blockList = new List<BlockPos>();
-                BlockPos bottomBlock = Pos.DownCopy(1);
+                int scanningRangeVert = isDownFacing ? downwardsRange : 1;
+                BlockPos bottomBlock = Pos.DownCopy(scanningRangeVert);
                 for (int i = -range; i <= range; i++)
                 {
                     for (int k = -range; k <= range; k++)
                     {
-                        if (i == 0 && k == 0)
+                        if (!isDownFacing && i == 0 && k == 0)
                         {
                             //Don't care for the block directly beneath
                             continue;
@@ -79,7 +90,7 @@ namespace SprinklersMod.BlockEntities
                     {
                         BlockEntityFarmland be = Api.World.BlockAccessor.GetBlockEntity<BlockEntityFarmland>(bPos);
                         blockCount++;
-                        if (be.MoistureLevel < 0.8)
+                        if (be.MoistureLevel < LATCH_UPPER_LIMIT && !overfillLatch)
                         {
                             be.WaterFarmland(0.1f, false);
                             wateredAtLeastOneBlock = true;
@@ -92,6 +103,13 @@ namespace SprinklersMod.BlockEntities
                         blockMoistures += be.MoistureLevel;
                     }
                 }
+                float newWaterPercentage = blockMoistures / blockCount;
+                if (newWaterPercentage != avgWaterPercentage)
+                {
+                    avgWaterPercentage = newWaterPercentage;
+                    
+                    dirty = true;
+                }
                 if (wateredAtLeastOneBlock)
                 {
                     if (Api.World.Side == EnumAppSide.Client)
@@ -100,7 +118,19 @@ namespace SprinklersMod.BlockEntities
                         runAnimation("sprinkler-turn");
                     }
                     waterAmount -= Math.Max(1, SprinklersModSystem.config.waterConsumption);
-                    avgWaterPercentage = blockMoistures / blockCount;
+                    if (avgWaterPercentage >= LATCH_UPPER_LIMIT)
+                    {
+                        overfillLatch = true;
+                    }
+                    dirty = true;
+                }
+                else if (overfillLatch && avgWaterPercentage < LATCH_LOWER_LIMIT)
+                {
+                    overfillLatch = false;
+                    dirty = true;
+                }
+                if (dirty)
+                {
                     MarkDirty();
                 }
             }
@@ -117,6 +147,10 @@ namespace SprinklersMod.BlockEntities
                 T("liters")) //Translation for Liters
             );
             dsc.Append(T("averagemoisture") + ": " + (avgWaterPercentage * 100).ToString("0.#") + "%\n");
+            if (isDownFacing && downwardsRange > 0)
+            {
+                dsc.Append("Range: " + downwardsRange.ToString());
+            }
             dsc.ToString();
         }
 
@@ -126,13 +160,17 @@ namespace SprinklersMod.BlockEntities
             base.ToTreeAttributes(tree);
             tree.SetInt("waterAmount", waterAmount);
             tree.SetFloat("avgWaterPercentage", avgWaterPercentage);
+            tree.SetInt("downwardsRange", downwardsRange);
+            tree.SetBool("overfillLatch", overfillLatch);
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
             base.FromTreeAttributes(tree, worldForResolving);
-            waterAmount = tree.GetInt("waterAmount");
-            avgWaterPercentage = tree.GetFloat("avgWaterPercentage");
+            waterAmount = tree.GetInt("waterAmount", 0);
+            avgWaterPercentage = tree.GetFloat("avgWaterPercentage", 0.0f);
+            downwardsRange = tree.GetInt("downwardsRange", 3);
+            overfillLatch = tree.GetBool("overfillLatch", avgWaterPercentage >= 0.95);
         }
 
         public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
@@ -165,6 +203,20 @@ namespace SprinklersMod.BlockEntities
         {
             return volume - waterAmount;
         }
+
+        public void adjustVertRange()
+        {
+            //Adjust range downwards only for down facing sprinklers
+            if (downwardsRange >= 6)
+            {
+                downwardsRange = 3;
+            }
+            else
+            {
+                downwardsRange++;
+            }
+            MarkDirty();
+        }
         
         //Translations
         private static string T(string code)
@@ -174,10 +226,45 @@ namespace SprinklersMod.BlockEntities
 
         private void spawnParticles(BlockPos p)
         {
-            SimpleParticleProperties WaterParticles = new SimpleParticleProperties(
-                15, 20, ColorUtil.WhiteArgb, new Vec3d(p.X + 0.5, p.Y + 1.1f, p.Z + 0.5), new Vec3d(p.X + 0.5, p.Y + 1.5f, p.Z + 0.5),
-                new Vec3f(-1f, 0.5f, -1f), new Vec3f(1f, 2f, 1f), 1f, 1f, 0.33f, 0.75f, EnumParticleModel.Cube
-            );
+            SimpleParticleProperties WaterParticles;
+            if (!isDownFacing)
+            {
+                //This particle Spawner will calculate the distance from the sprinkler to the acre
+                //and then yeet a sploosh of water in that direction
+                WaterParticles = new SimpleParticleProperties(
+                    /* minQuantity */ 10,
+                    /* maxQuantity */ 15,
+                    /* color */ ColorUtil.WhiteArgb,
+                    /* minPos */ new Vec3d(Pos.X + 0.4f, Pos.Y + 0.3f, Pos.Z + 0.4f),
+                    /* maxPos */ new Vec3d(Pos.X + 0.6f, Pos.Y + 0.5f, Pos.Z + 0.6f),
+                    /* minVelocity */ new Vec3f(p.X -0.5f, p.Y + 5.8f, p.Z -0.5f).Sub(new Vec3f(Pos.X, Pos.Y, Pos.Z)),
+                    /* maxVelocity */ new Vec3f(p.X + 0.5f, p.Y + 6.2f, p.Z + 0.5f).Sub(new Vec3f(Pos.X, Pos.Y, Pos.Z)),
+                    /* lifeLength */ 1.5f,
+                    /* gravity */ 1f,
+                    /* minSize */ 0.8f,
+                    /* maxSize */ 1.4f,
+                    /* model */ EnumParticleModel.Cube
+                );
+            } else
+            {
+                //For the life of me, I couldn't figure the right trajectory out for downwards facing
+                //As I'm not a huge math nerd this will have to do
+                //Spawns litte water splooshs directly emitting from the acre
+                WaterParticles = new SimpleParticleProperties(
+                    /* minQuantity */ 15,
+                    /* maxQuantity */ 20,
+                    /* color */ ColorUtil.WhiteArgb,
+                    /* minPos */ new Vec3d(p.X + 0.5, p.Y + 1.1f, p.Z + 0.5),
+                    /* maxPos */ new Vec3d(p.X + 0.5, p.Y + 1.5f, p.Z + 0.5),
+                    /* minVelocity */ new Vec3f(-1.2f, 2f, -1.2f),
+                    /* maxVelocity */ new Vec3f(1.2f, 3.5f, 1.2f),
+                    /* lifeLength */ 1f,
+                    /* gravity */ 1f,
+                    /* minSize */ 0.8f,
+                    /* maxSize */ 1.4f,
+                    /* model */ EnumParticleModel.Cube
+                );
+            }
 
             WaterParticles.SizeEvolve = new EvolvingNatFloat(EnumTransformFunction.LINEAR, -0.7f);
             WaterParticles.ClimateColorMap = "climateWaterTint";

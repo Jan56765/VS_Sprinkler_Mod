@@ -43,6 +43,10 @@
     "groundTransform": {
         "scale": 4
     },
+    "guiTransform": {
+        "origin": { "x": 0.5, "y": 0.3, "z": 0.5 },
+        "scale": 1.7
+    },
     "heldTpIdleAnimation": "holdbothhandslarge", "heldRightReadyAnimation": "heldblockready", "heldTpUseAnimation": "twohandplaceblock",
 	"tpHandTransform": {
 		"translation": { "x": -1.23, "y": -0.95, "z": -0.4 },

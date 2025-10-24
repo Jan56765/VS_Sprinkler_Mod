@@ -1,5 +1,5 @@
 {
-	"code": "t_three_sprinkler",
+	"code": "t_four_sprinkler_down",
 	"class": "sprinklersmod.sprinkler",
     "entityClass": "sprinklersmod.blockEntitySprinkler",
     "entityBehaviors": [{ "name": "Animatable"}],
@@ -25,10 +25,10 @@
     },
     "collisionbox": null,
     "selectionbox": {
-        "x1": 0.25, "y1": 0, "z1": 0.25, "x2": 0.75, "y2": 0.5, "z2": 0.75
+        "x1": 0.25, "y1": 0.5, "z1": 0.25, "x2": 0.75, "y2": 1.0, "z2": 0.75
     },
     "shapeByType": {
-        "*": {"base": "block/sprinkler"}
+        "*": {"base": "block/sprinkler-down"}
     },
     "texturesbytype": {
         "*-lead": {
@@ -44,13 +44,13 @@
         "scale": 4
     },
     "guiTransform": {
-        "origin": { "x": 0.5, "y": 0.3, "z": 0.5 },
+        "origin": { "x": 0.5, "y": 0.65, "z": 0.5 },
         "scale": 1.7
     },
     "heldTpIdleAnimation": "holdbothhandslarge", "heldRightReadyAnimation": "heldblockready", "heldTpUseAnimation": "twohandplaceblock",
 	"tpHandTransform": {
-		"translation": { "x": -1.23, "y": -0.95, "z": -0.4 },
-		"rotation": { "x": -2, "y": 25, "z": -100 },
+		"translation": { "x": -0.8, "y": -0.85, "z": -0.65 },
+		"rotation": { "x": -2, "y": 25, "z": -80 },
 		"scale": 0.6
 	}
 	

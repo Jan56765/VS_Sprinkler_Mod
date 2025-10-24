@@ -25,11 +25,13 @@ namespace SprinklersMod.Blocks
 
             if (api.Side != EnumAppSide.Client) return;
 
-            interactions = ObjectCacheUtil.GetOrCreate(api, "sprinklerInteractions", () =>
+            string dir = Code.Path.Contains("down") ? "down" : "up";
+
+            interactions = ObjectCacheUtil.GetOrCreate(api, "sprinklerInteractions" + dir, () =>
             {
                 List<ItemStack> list = getApplicableContainers();
 
-                return new WorldInteraction[] {
+                WorldInteraction[] interactions = {
                     new WorldInteraction()
                     {
                         MouseButton = EnumMouseButton.Right,
@@ -44,6 +46,20 @@ namespace SprinklersMod.Blocks
                         Itemstacks = list.ToArray()
                     }
                 };
+
+                if ("down".Equals(dir))
+                {
+                    interactions = interactions.Append(
+                        new WorldInteraction()
+                        {
+                            MouseButton = EnumMouseButton.Right,
+                            ActionLangCode = "blockhelp-sprinkler-set-range",
+                            RequireFreeHand = true
+                        }
+                    );
+                }
+
+                return interactions;
             });
         }
 
@@ -60,6 +76,13 @@ namespace SprinklersMod.Blocks
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
             BlockEntitySprinkler blockEntitySprinkler = world.BlockAccessor.GetBlockEntity<BlockEntitySprinkler>(blockSel.Position);
+            //Check if a downwards facing sprinkler is being interacted with by hand
+            if (blockEntitySprinkler.isDownFacing && byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack == null)
+            {
+                blockEntitySprinkler.adjustVertRange();
+                return true;
+            }
+            //If not caught by the above block, resume normal behavior
             if (blockEntitySprinkler.getMissingWater() > 0)
             {
                 int water = checkSelectedItem(byPlayer);
