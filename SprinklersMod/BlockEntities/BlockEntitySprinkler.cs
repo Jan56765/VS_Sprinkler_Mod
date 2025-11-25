@@ -25,8 +25,8 @@ namespace SprinklersMod.BlockEntities {
         public int downwardsRange = 3;
 
         public bool overfillLatch = false; //This is used to create a latching behavior where sprinklers water until a threshold and only begin watering again until a lower threshold is met again. This way, a lot of water will be saved
-        private const float LATCH_LOWER_LIMIT = 0.85f;
-        private const float LATCH_UPPER_LIMIT = 0.95f;
+        private float LATCH_LOWER_LIMIT = Math.Max(0.01f, SprinklersModSystem.config.minActivationThreshold);
+        private float LATCH_UPPER_LIMIT = Math.Min(0.99f, SprinklersModSystem.config.maxActivationThreshold);
 
 
         public override void Initialize(ICoreAPI api) {

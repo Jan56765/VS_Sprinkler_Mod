@@ -13,4 +13,8 @@ public class ModConfig
     public int waterConsumption = 1;
 
     public int minIntervalInMillis = 10000;
+
+    public float minActivationThreshold = 0.85f;
+
+    public float maxActivationThreshold = 0.95f;
 }

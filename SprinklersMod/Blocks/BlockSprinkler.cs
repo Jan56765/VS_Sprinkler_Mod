@@ -15,6 +15,14 @@ namespace SprinklersMod.Blocks {
         *   the sprinkler gets filled */
         const float WATERING_CAN_CONSUMPTION = 2.0f;
 
+        //This is a list of all water types able to be used on a sprinkler to fill it
+        //From the base game, only game:waterportion can be used. Other fluids will be declared afterwards
+        readonly string[] VALID_WATER_TYPES = {
+            "game:waterportion",
+            "hydrateordiedrate:waterportion-fresh-rain-clean",
+            "hydrateordiedrate:waterportion-fresh-well-clean"
+        };
+
         WorldInteraction[] interactions;
 
         public override void OnLoaded(ICoreAPI api) {
@@ -30,13 +38,13 @@ namespace SprinklersMod.Blocks {
                 WorldInteraction[] interactions = {
                     new WorldInteraction() {
                         MouseButton = EnumMouseButton.Right,
-                        ActionLangCode = "blockhelp-sprinkler-fill",
+                        ActionLangCode = "blockhelp-sprinkler-fill2",
                         Itemstacks = list.ToArray()
                     },
                     new WorldInteraction() {
                         MouseButton = EnumMouseButton.Right,
-                        HotKeyCode = "shift",
-                        ActionLangCode = "blockhelp-sprinkler-fill2",
+                        HotKeyCode = "ctrl",
+                        ActionLangCode = "blockhelp-sprinkler-fill",
                         Itemstacks = list.ToArray()
                     }
                 };
@@ -117,9 +125,9 @@ namespace SprinklersMod.Blocks {
                     //This should cover all containers able to hold water (Buckets, Jugs, Bowls etc.)
                     BlockLiquidContainerBase bl = (BlockLiquidContainerBase) currentlyHeldBlock;
                     if (bl.GetContent(itemStack) != null) {
-                        int mult = byPlayer.Entity.Controls.ShiftKey ? 10 : 1;
+                        int mult = byPlayer.Entity.Controls.CtrlKey ? 1 : 10;
                         ItemStack contents = bl.GetContent(itemStack);
-                        if ("game:waterportion".Equals(contents.Item.Code)) {
+                        if (VALID_WATER_TYPES.Contains(contents.Item.Code.ToString())) {
                             float maxConsumption = 1.0f * mult;
                             int initialStackSize = contents.StackSize;
                             bl.TryTakeLiquid(itemStack, 1.0f * maxConsumption);
