@@ -79,8 +79,9 @@ namespace SprinklersMod.Blocks {
                 return true;
             }
             //If not caught by the above block, resume normal behavior
-            if (blockEntitySprinkler.getMissingWater() > 0) {
-                int water = checkSelectedItem(byPlayer);
+            int missingWater = blockEntitySprinkler.getMissingWater();
+            if (missingWater > 0) {
+                int water = checkSelectedItem(byPlayer, missingWater);
 
                 if (water > 0 && api.Side == EnumAppSide.Server) {
                     playFillSound(byPlayer);
@@ -97,10 +98,13 @@ namespace SprinklersMod.Blocks {
 
         //
         // Summary: check the current itemstack for if it is a container
+        // 
+        // Param byPlayer: required to access the players inventory to check for
+        // Param missingWater: required to determine if the action to perform would even be required
         //
         // Returns the amount of water left to be used
         //
-        public int checkSelectedItem(IPlayer byPlayer) {
+        public int checkSelectedItem(IPlayer byPlayer, int missingWater) {
             if (byPlayer.InventoryManager.ActiveHotbarSlot == null || byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack == null) {
                 return 0;
             }
@@ -125,13 +129,17 @@ namespace SprinklersMod.Blocks {
                     //This should cover all containers able to hold water (Buckets, Jugs, Bowls etc.)
                     BlockLiquidContainerBase bl = (BlockLiquidContainerBase) currentlyHeldBlock;
                     if (bl.GetContent(itemStack) != null) {
-                        int mult = byPlayer.Entity.Controls.CtrlKey ? 1 : 10;
-                        ItemStack contents = bl.GetContent(itemStack);
-                        if (VALID_WATER_TYPES.Contains(contents.Item.Code.ToString())) {
-                            float maxConsumption = 1.0f * mult;
-                            int initialStackSize = contents.StackSize;
-                            bl.TryTakeLiquid(itemStack, 1.0f * maxConsumption);
-                            return initialStackSize >= 100 * mult ? 10 * mult : initialStackSize / 100 * mult;
+                        bool consumption = byPlayer.Entity.Controls.CtrlKey;
+                        ItemStack contents = bl.GetContent(itemStack); //Stack Size in Buckets equals 1000 Units = 1 Liter so needs to be converted
+                        if (VALID_WATER_TYPES.Contains(contents.Item.Code.ToString()) && contents.StackSize > 0) {
+                            int liquidToTake = Math.Min(contents.StackSize / 10, Math.Min(consumption ? 10 : 100, missingWater)); //init as int, because otherwise we get floating point imprecision
+                            if (liquidToTake > 0) {
+                                bl.SplitStackAndPerformAction(byPlayer.Entity, byPlayer.InventoryManager.ActiveHotbarSlot, delegate (ItemStack stack) {
+                                    bl.TryTakeLiquid(stack, ((float) liquidToTake) / 10f); //This method calculates with 1 Units being 1 Liter, so we need to convert to float
+                                    return 1;
+                                });
+                            }
+                            return liquidToTake;
                         }
                     }
                 }
