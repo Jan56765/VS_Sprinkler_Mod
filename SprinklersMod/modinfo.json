@@ -7,11 +7,11 @@
     ],
     "contributors": ["Vaaataaa"],
     "description": "Adds various tiers of Sprinklers to Vintage Story. These will run periodically, I will take no responsibility for lag created from excessive use ;)",
-    "version": "1.0.3",
+    "version": "1.22.1",
     "requiredOnClient": true,
     "requiredOnServer": true,
     "iconPath": "assets/sprinklersmod/modIcon.png",
     "dependencies": {
-        "game": "1.21.1"
+        "game": "1.22.1"
     }
 }
